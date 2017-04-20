@@ -132,7 +132,7 @@ class Dependencies(object):
         models_blacklist_patterns = \
             [pattern2oerp(model) for model in (models_blacklist)]
         if models:
-            import pudb; pudb.set_trace()
+            # import pudb; pudb.set_trace()
             model_obj = self.oerp.get('ir.model')
             args = [('model', '=ilike', model)
                     for model in models_patterns]
@@ -142,15 +142,18 @@ class Dependencies(object):
                 args.append('!')
                 args.append(('model', '=ilike', model))
             ids = model_obj.search(args)
-            for data in model_obj.read(ids, ['model', 'modules']):
-                if not self._config['show_model_transient']:
+            for data in model_obj.read(ids, ['model', 'modules', 'transient']):
+                if not self._config['show_model_transient'] \
+                        and data['transient']:
                     continue
-                if not self._config['show_model_normal']:
+                if not self._config['show_model_normal'] \
+                        and not data['transient']:
                     continue
                 res[data['model']] = {
                     'model': data['model'],
                     'modules': data['modules']
-                    and data['modules'].split(', ') or []
+                    and data['modules'].split(', ') or [],
+                    'transient': data['transient'],
                 }
         return res
 
