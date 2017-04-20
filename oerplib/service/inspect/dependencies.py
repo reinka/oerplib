@@ -142,18 +142,15 @@ class Dependencies(object):
                 args.append('!')
                 args.append(('model', '=ilike', model))
             ids = model_obj.search(args)
-            for data in model_obj.read(ids, ['model', 'modules']):#, 'osv_memory']):
-                if not self._config['show_model_transient']: #\
-                        # and data['osv_memory']:
+            for data in model_obj.read(ids, ['model', 'modules']):
+                if not self._config['show_model_transient']:
                     continue
-                if not self._config['show_model_normal']: #\
-                        # and not data['osv_memory']:
+                if not self._config['show_model_normal']:
                     continue
                 res[data['model']] = {
                     'model': data['model'],
                     'modules': data['modules']
-                    and data['modules'].split(', ') or [],
-                    # 'transient': data['osv_memory'],
+                    and data['modules'].split(', ') or []
                 }
         return res
 
