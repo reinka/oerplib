@@ -132,6 +132,7 @@ class Dependencies(object):
         models_blacklist_patterns = \
             [pattern2oerp(model) for model in (models_blacklist)]
         if models:
+            import pudb; pudb.set_trace()
             model_obj = self.oerp.get('ir.model')
             args = [('model', '=ilike', model)
                     for model in models_patterns]
@@ -141,18 +142,18 @@ class Dependencies(object):
                 args.append('!')
                 args.append(('model', '=ilike', model))
             ids = model_obj.search(args)
-            for data in model_obj.read(ids, ['model', 'modules', 'osv_memory']):
-                if not self._config['show_model_transient'] \
-                        and data['osv_memory']:
+            for data in model_obj.read(ids, ['model', 'modules']):#, 'osv_memory']):
+                if not self._config['show_model_transient'] #\
+                        # and data['osv_memory']:
                     continue
-                if not self._config['show_model_normal'] \
-                        and not data['osv_memory']:
+                if not self._config['show_model_normal']: #\
+                        # and not data['osv_memory']:
                     continue
                 res[data['model']] = {
                     'model': data['model'],
                     'modules': data['modules']
                     and data['modules'].split(', ') or [],
-                    'transient': data['osv_memory'],
+                    # 'transient': data['osv_memory'],
                 }
         return res
 
